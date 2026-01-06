@@ -1,5 +1,3 @@
----
-
 # PiepsServer 🐤
 
 Ein leichtgewichtiger, TypeScript-basierter Wrapper für den nativen Node.js HTTP-Server. **PiepsServer** wurde entwickelt, um das Ausliefern von statischen Dateien, die Verwaltung von CORS-Einstellungen und das Hinzufügen von benutzerdefinierten Request-Handlern so einfach wie möglich zu gestalten.
