@@ -1,5 +1,3 @@
-Hier ist ein strukturiertes und ansprechendes GitHub-README für dein Projekt. Ich habe die Informationen übersichtlich gegliedert, damit neue Nutzer sofort verstehen, wie sie **PiepsServer** einsetzen können.
-
 ---
 
 # PiepsServer 🐤
