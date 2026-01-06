@@ -1,61 +1,61 @@
 # PiepsServer 🐤
 
-Ein leichtgewichtiger, TypeScript-basierter Wrapper für den nativen Node.js HTTP-Server. **PiepsServer** wurde entwickelt, um das Ausliefern von statischen Dateien, die Verwaltung von CORS-Einstellungen und das Hinzufügen von benutzerdefinierten Request-Handlern so einfach wie möglich zu gestalten.
+A lightweight, TypeScript-based wrapper for the native Node.js HTTP server. **PiepsServer** is designed to simplify serving static files, managing CORS settings, and adding custom request handlers without the overhead of heavy frameworks.
 
 ## ✨ Features
 
-* 🚀 **Einfaches Setup:** Erstelle einen funktionsfähigen Server mit nur wenigen Zeilen Code.
-* 📂 **Static Middleware:** Automatisches Serving von statischen Dateien (HTML, CSS, JS, Bilder, etc.).
-* 🔍 **MIME-Type Support:** Integrierte Erkennung für über 15 gängige Dateitypen.
-* 🌐 **CORS Support:** Flexible Konfiguration der Cross-Origin Resource Sharing Regeln.
-* 🧩 **Flexibilität:** Nutze automatisierte statische Routen oder definiere eigene, manuelle Request-Handler.
+* 🚀 **Seamless Setup:** Get your server up and running with just a few lines of code.
+* 📂 **Static Middleware:** Automatically serve HTML, CSS, JS, images, and more from any directory.
+* 🔍 **MIME-Type Support:** Built-in detection for over 15 common file formats.
+* 🌐 **CORS Support:** Effortless configuration for Cross-Origin Resource Sharing.
+* 🧩 **Flexible:** Supports both automated static routing and manual, low-level request handlers.
 
 ---
 
 ## 🛠 Installation
 
-Da PiepsServer aktuell als lokales Modul konzipiert ist, kopiere die Quelldateien direkt in dein Projektverzeichnis.
+Since PiepsServer is currently a local module, copy the source files into your project directory.
 
-**Voraussetzungen:** Node.js und TypeScript müssen installiert sein.
+**Prerequisites:** Ensure you have Node.js and TypeScript installed.
 
 ```bash
-# Projekt initialisieren (falls noch nicht geschehen)
+# Initialize your project (if not already done)
 npm init -y
 
-# Notwendige Abhängigkeiten für TypeScript installieren
+# Install required TypeScript dependencies
 npm install --save-dev typescript @types/node
 
 ```
 
 ---
 
-## 🚀 Schnellstart (Usage)
+## 🚀 Quick Start (Usage)
 
-Du kannst PiepsServer auf zwei Arten nutzen:
+There are two primary ways to use PiepsServer:
 
-### 1. Als statischer Webserver
+### 1. As a Static Web Server
 
-Ideal für das Deployment von Frontends (z. B. aus einem `src`- oder `dist`-Ordner).
+Perfect for serving front-end applications (e.g., from a `src` or `dist` folder).
 
 ```typescript
 import PiepsHttpServer from "./PiepsServer.ts";
 
 const App = new PiepsHttpServer();
 
-// Server auf Port 3030 starten
+// Start server on port 3030
 App.CreateServer(3030, "localhost");
 
-// CORS konfigurieren (Standard: alle erlauben)
+// Configure CORS (Default: allow all)
 App.SetCORS({ origin: "*" });
 
-// Statische Dateien aus dem Ordner "src" bedienen
+// Serve static files from the "src" directory
 App.StaticMiddleWare("src");
 
 ```
 
-### 2. Mit manuellem Request-Handler
+### 2. With a Custom Request Handler
 
-Perfekt für kleine APIs oder spezifische Endpunkte.
+Ideal for building APIs or handling specific endpoints manually.
 
 ```typescript
 import * as http from "node:http";
@@ -67,10 +67,10 @@ server.CreateServer(4040, "localhost");
 const myHandler: http.RequestListener = (req, res) => {
     if (req.url === "/api/data") {
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: "Hallo von PiepsServer!" }));
+        res.end(JSON.stringify({ message: "Hello from PiepsServer!" }));
     } else {
         res.writeHead(404);
-        res.end("Nicht gefunden");
+        res.end("Not Found");
     }
 };
 
@@ -80,41 +80,41 @@ server.AddHttpHandler(myHandler);
 
 ---
 
-## 📖 API Dokumentation
+## 📖 API Documentation
 
 ### PiepsHttpServer
 
-| Methode | Beschreibung |
+| Method | Description |
 | --- | --- |
-| `CreateServer(port, hostname)` | Initialisiert und startet den HTTP-Server auf dem angegebenen Port. |
-| `SetCORS(settings)` | Konfiguriert die erlaubten Origins (`CorsSettings`). |
-| `AddHttpHandler(handler)` | Registriert einen klassischen Node.js `RequestListener`. |
-| `StaticMiddleWare(folder)` | Aktiviert das automatische Servieren von Dateien aus dem Zielordner. |
+| `CreateServer(port, hostname)` | Initializes and starts the HTTP server. |
+| `SetCORS(settings)` | Sets the allowed origins and CORS rules. |
+| `AddHttpHandler(handler)` | Attaches a standard Node.js `RequestListener`. |
+| `StaticMiddleWare(folder)` | Enables automatic file serving from the specified directory. |
 
-### Unterstützte Dateitypen
+### Supported File Types (MIME Types)
 
-Die Middleware erkennt automatisch folgende Endungen und setzt den korrekten `Content-Type`:
+The middleware automatically detects and serves the following extensions:
 `html`, `css`, `js`, `ico`, `png`, `jpg`, `jpeg`, `svg`, `json`, `txt`, `bin`, `webp`, `ttf`, `pdf`.
 
 ---
 
-## 📂 Projektstruktur
+## 📂 Project Structure
 
-* `PiepsServer.ts`: Die Kernklasse zur Serversteuerung.
-* `PiepsServerMiddelWare.ts`: Die Logik für das Datei-Streaming und Routing.
-* `PiepsServerData.ts`: Konfigurationen für MIME-Types und Content-Listen.
+* `PiepsServer.ts`: The core class for server control.
+* `PiepsServerMiddelWare.ts`: Logic for file streaming and routing.
+* `PiepsServerData.ts`: Configuration for MIME-types and content lists.
 
 ---
 
-## ⚠️ Sicherheitshinweis
+## ⚠️ Production Note
 
-Im Standard-Setup ist CORS auf `*` gesetzt. Für **Produktionsumgebungen** solltest du den Zugriff explizit einschränken:
+By default, CORS is set to `*`. For **production environments**, it is highly recommended to restrict access to your specific domain:
 
 ```typescript
-App.SetCORS({ origin: "https://deine-domain.de" });
+App.SetCORS({ origin: "https://your-domain.com" });
 
 ```
 
 ---
 
-Soll ich dir zusätzlich dabei helfen, eine passende `tsconfig.json` oder ein `package.json`-Skript zum Starten des Servers zu erstellen?
+Would you like me to also generate a **License** file (like MIT) or a **Contribution Guide** for your repository?
