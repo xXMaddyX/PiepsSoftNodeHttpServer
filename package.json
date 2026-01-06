@@ -1,0 +1,16 @@
+{
+  "name": "piepssoftnodehttpserver",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.ts"
+  },
+  "dependencies": {
+    "@types/node": "^25.0.3"
+  }
+}
