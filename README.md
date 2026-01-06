@@ -116,5 +116,3 @@ App.SetCORS({ origin: "https://your-domain.com" });
 ```
 
 ---
-
-Would you like me to also generate a **License** file (like MIT) or a **Contribution Guide** for your repository?
