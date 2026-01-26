@@ -4,20 +4,27 @@ import * as fsProm from "node:fs/promises";
 import * as path from "node:path";
 import * as PSD from "./PiepsServerData.ts";
 import type { PiepsContentTypes } from "./PiepsServerData.ts";
-import type { CorsSettings } from "./PiepsServer.ts";
 import PiepsHttpServer from "./PiepsServer.ts";
 
 
 export default class PiepsMiddelware{
     static async MiddelwareHandler(rootFolder: string, req: http.IncomingMessage, res: http.ServerResponse) {
-        let completePath = path.join(path.resolve(), rootFolder, req.url!);
+        //--------------------------------------------TRAVERSAL_BLOCK----------------------------------------------->
+        const ROOT_PATH = "/"
+        const rootAbsolutePath = path.resolve(rootFolder);
+        const targetPath = path.resolve(path.join(rootAbsolutePath, req.url!));
+
+        if (!targetPath.startsWith(rootAbsolutePath)) {
+            res.writeHead(403, { "content-type": "text/plain" })
+            res.end("dont use traversal, you litte brat! :D")
+        }
         //-----------------------------------------HANDLE_INDEX:HTML_ETNRY------------------------------------------->
         //ROUTE FOR HANDLING ENTRYPOINT OF MIDDELWARE.
         //TAKES ROOT FOLDER FOR ACCESSING THROUGHT CLIENT.
         //CROSSORIGIN SET TO ALL SOURCES AT THE MOMENT NEED TO CHANGE FOR PRODUCTION (DEF MODE)
-        if (req.url == "/") {
+        if (req.url == "/" || req.url == "") {
             try {
-                let indexHtmlPath = completePath + "index.html";
+                let indexHtmlPath = targetPath + ROOT_PATH + "index.html";
                 let page = await fsProm.readFile(indexHtmlPath);
                 res.writeHead(200, {
                     "content-type": "text/html",
@@ -38,7 +45,6 @@ export default class PiepsMiddelware{
         } else {
             let result: string | null = this.CheckSubstring(req);
             if (result != null) {
-                //NEED TO ADD CLEAN PATH!!!!!!!!!! FUNCTION
                     let pathToLoad = path.join(path.resolve(), rootFolder ,req.url!).replaceAll("%20", " ");
                     let BufferArr: Buffer[] = [];
                     let streamLoad = fs.createReadStream(pathToLoad);
@@ -70,12 +76,14 @@ export default class PiepsMiddelware{
         }
     };
     static CheckSubstring(req: http.IncomingMessage): string | null {
-        var result: string | null = null;
-        PSD.PiepsContentTypeList.forEach(item => {
-            if (req.url?.endsWith("." + item)) {
-                result = PSD.PiepsContentTypeObj[item as keyof PiepsContentTypes];
-            }
-        })
-        return result;
+        const url = req.url;
+        if (!url) return null;
+
+        const dotIndex = url.lastIndexOf(".");
+        if (dotIndex === -1) return null;
+
+        const extension = url.substring(dotIndex + 1); 
+        
+        return PSD.PiepsContentTypeObj[extension as keyof PiepsContentTypes] || null;
     }
 }

@@ -4,8 +4,7 @@ import PiepsMiddelware from "./PiepsServerMiddelWare.ts";
 export interface CorsSettings{
     origin: string
 
-}
-
+};
 export default class PiepsHttpServer{
     Server: http.Server | null
     Port: number | null
@@ -31,6 +30,7 @@ export default class PiepsHttpServer{
     SetCORS(corsSettings: CorsSettings) {
         PiepsHttpServer.CorsSettings.origin = corsSettings.origin;
     };
+    
     AddHttpHandler(handler: http.RequestListener) {
         this.Server?.addListener("request", handler);
     };
