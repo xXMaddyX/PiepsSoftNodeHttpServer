@@ -5,9 +5,15 @@ export interface CorsSettings{
     origin: string
 
 };
+type PiepsHandlerFunctions = (
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    next: () => void
+) => void
+
 export default class PiepsHttpServer{
     //HANDLER_POOL--------------------------------->
-    handlers: http.RequestListener[] = [];
+    handlers: PiepsHandlerFunctions[] = [];
     //SERVER_SETTINGS------------------------------>
     Server: http.Server | null
     Port: number | null
@@ -26,13 +32,16 @@ export default class PiepsHttpServer{
     CreateServer(port: number, hostname: string) {
         this.Port = port;
         this.Hostname = hostname;
-        this.Server = http.createServer(async (req, res) => {
-            for (const handler of this.handlers) {
-                await handler(req, res);
-
-                if (res.writableEnded) return;
+        this.Server = http.createServer();
+        this.Server.on("request", (req, res) => {
+            let index = 0;
+            const next = () => {
+                let handler = this.handlers[index]
+                if (res.writableEnded) { return; }
+                handler(req, res, next);
             }
-        });
+            next();
+        })
 
         this.Server.listen(this.Port, this.Hostname, () => {
             console.log(`Server is Running on http://${this.Hostname}:${this.Port}`);
@@ -43,12 +52,17 @@ export default class PiepsHttpServer{
     };
     
     AddHttpHandler(handler: http.RequestListener) {
-        this.handlers.push(handler)
+        this.handlers.push((req, res, next) => {
+            handler(req, res)
+            next()
+        })
     };
 
     StaticMiddleWare(staticFolder: string) {
-        this.handlers.push(async (req, res) => {
-            await PiepsMiddelware.MiddelwareHandler(staticFolder, req, res);
+        this.handlers.push((req, res, next) => {
+            PiepsMiddelware.MiddelwareHandler(staticFolder, req, res).then(() => {
+                if (res.writableEnded) next()
+            });
         })
     };
 };
