@@ -17,12 +17,14 @@ export default class PiepsMiddelware{
         if (!targetPath.startsWith(rootAbsolutePath)) {
             res.writeHead(403, { "content-type": "text/plain" })
             res.end("dont use traversal, you litte brat! :D")
+            return;
         }
         //-----------------------------------------HANDLE_INDEX:HTML_ETNRY------------------------------------------->
         //ROUTE FOR HANDLING ENTRYPOINT OF MIDDELWARE.
         //TAKES ROOT FOLDER FOR ACCESSING THROUGHT CLIENT.
         //CROSSORIGIN SET TO ALL SOURCES AT THE MOMENT NEED TO CHANGE FOR PRODUCTION (DEF MODE)
         if (req.url == "/" || req.url == "") {
+            if (res.headersSent) { return; }
             try {
                 let indexHtmlPath = targetPath + ROOT_PATH + "index.html";
                 let page = await fsProm.readFile(indexHtmlPath);
@@ -36,7 +38,7 @@ export default class PiepsMiddelware{
                 res.writeHead(404, {
                     "content-type": "text/plain"
                 })
-                res.end("Error 404")
+                res.end("Error 404");
             }
             //---------------------------------------END_OF HANDLING ENTRY_POINT--------------------------------------->
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////>
@@ -56,7 +58,7 @@ export default class PiepsMiddelware{
                             "content-type": "text/plain",
                             "access-control-allow-origin": PiepsHttpServer.CorsSettings.origin,
                         });
-                        res.end("Error 404 Not found!!!")
+                        res.end("Error 404 Not found!!!");
                     });
                     streamLoad.on("end", () => {
                         var body = Buffer.concat(BufferArr);
