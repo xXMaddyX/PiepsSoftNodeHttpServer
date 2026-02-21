@@ -36,7 +36,7 @@ export default class PiepsHttpServer{
         this.Server.on("request", (req, res) => {
             let index = 0;
             const next = () => {
-                let handler = this.handlers[index]
+                let handler = this.handlers[index++]
                 if (res.writableEnded) { return; }
                 handler(req, res, next);
             }
